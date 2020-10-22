@@ -11,7 +11,7 @@ directory:
 
 ```
 cd namespaces/packages
-git clone https://github.com/spiralgen/spiral-package-simt.git simt
+git clone https://github.com/spiral-software/spiral-package-simt.git simt
 ```
 
 
