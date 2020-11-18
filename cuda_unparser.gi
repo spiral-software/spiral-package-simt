@@ -132,6 +132,7 @@ Class(CudaUnparser, CUnparser, rec(
                    o.id="destroy"      and IsBound(self.opts.subName),
                      Concat("destroy_",self.opts.subName),
                    o.id),
+		When ((IsBound(self.opts.wrapCFuncs) and self.opts.wrapCFuncs), Print("\nextern \"C\" {")),
         Print("\n", Blanks(i),
             self.opts.funcModifier, self.declare(o.ret, var(id, o.ret), i, is), "(",
             DoForAllButLast(parameters, p->Print(self.declare(p.t, p,i,is), ", ")),
@@ -140,7 +141,8 @@ Class(CudaUnparser, CUnparser, rec(
             When(IsBound(self.opts.postalign), DoForAll(parameters, p->self.opts.postalign(p,i+is,is))),
             self(o.cmd, i+is, is),
             Blanks(i),
-            "}\n")),
+            "}\n"),
+		When ((IsBound(self.opts.wrapCFuncs) and self.opts.wrapCFuncs), Print("}\n"))),
 
     specifiers_func := (self, o, i, is) >> let(
         parameters:=Flat(o.params),
