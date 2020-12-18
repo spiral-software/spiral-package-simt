@@ -10,7 +10,7 @@ Class(SIMTTensor, Tensor, rec(
         Constraint(IsList(arg) and Length(arg) >= 2);
         simt_dim := arg[1];
         L := arg{[2..Length(arg)]};
-        L:=Filtered(L,x->x<>I(1));
+#        L:=Filtered(L,x->x<>I(1));
         if (Length(L)=0) then return I(1); fi;
         if Length(L)=1 then return L[1]; fi;
 
