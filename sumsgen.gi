@@ -64,13 +64,13 @@ Class(SIMTSumsGen, DefaultSumsGen, rec(
                         self(ch[i], opts) *
                     Gath(o.gathTensor(i)(Filtered([j1b, fId(bkcols), j2b], x->x<>0)));
             
-#                if j2.range <> 1 then
+                if j2.range <> 1 then
                     term := SIMTISum(o.simt_dim, j2, j2.range, term); 
-#                fi;
+                fi;
             
-#                if j1.range <> 1 then
+                if j1.range <> 1 then
                     term := SIMTISum(o.simt_dim, j1, j1.range, term); 
-#                fi;
+                fi;
             
                 Add(prod, term);
             fi;
