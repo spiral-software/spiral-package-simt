@@ -464,8 +464,10 @@ Class(CudaCodegen, DefaultCodegen, rec(
     end,
 
     make_kernels := meth(self, full_kernel, device_data, full_args, opts)
-        local kercx, ker_cnt, ker, ker_args, ker_datas, cuda_ker, cuda_desc, cuda_icode, 
+        local kercx, ker_cnt, ker, ker_args, ker_datas, cuda_ker, cuda_desc, cuda_icode, cuda_sub, 
                 dim_grid, dim_block, tbody, tas_grid, tas_block_shmem, cross_ker_tas, ta;
+				
+		cuda_sub := Cond(IsBound(opts.cudasubName), Concat("ker_",opts.cudasubName), "ker_code");
 
         cuda_desc := rec(grid_tarrays := [], cuda_kers := [] );
 
@@ -506,7 +508,7 @@ Class(CudaCodegen, DefaultCodegen, rec(
                                                            z := self.get_dim_idx(tbody, simtThreadIdxZ)
                                                         ) );
 
-            cuda_ker := specifiers_func(["__global__"], TVoid, "ker_code"::StringInt(ker_cnt), Filtered(ker_args, d -> not IsBound(d.("decl_specs")) or not "__constant__" in d.("decl_specs")), tbody );
+            cuda_ker := specifiers_func(["__global__"], TVoid, cuda_sub::StringInt(ker_cnt), Filtered(ker_args, d -> not IsBound(d.("decl_specs")) or not "__constant__" in d.("decl_specs")), tbody );
 
             Add(cuda_desc.cuda_kers,  rec(dim_grid := dim_grid, dim_block := dim_block, cuda_ker := cuda_ker));
 
@@ -570,7 +572,7 @@ Class(CudaCodegen, DefaultCodegen, rec(
 
     assemble_prog := meth(self, datas, initparams, params, io, o, icode, opts)
         local hparams, hio, p, hp, init_datas, device_datas, ker_args,
-              sub, cuda_sub, initsub, destroysub,
+              sub, initsub, destroysub,
               cuda_desc, cuda_icode, icode_wrap, initcode, destroycode, prog,
               wrapk_f;
 
@@ -602,7 +604,6 @@ Class(CudaCodegen, DefaultCodegen, rec(
         device_datas := List(init_datas, d -> d.var);
 
         sub := Cond(IsBound(opts.subName), opts.subName, "transform");
-        cuda_sub := "transform_ker";
         initsub := Cond(IsBound(opts.subName), Concat("init_", opts.subName), "init");
         destroysub := Cond(IsBound(opts.subName), Concat("destroy_", opts.subName), "destroy");
         ker_args := Concatenation(io, params);
