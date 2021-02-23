@@ -1,3 +1,7 @@
+
+##  Copyright (c) 2018-2021, Carnegie Mellon University
+##  See LICENSE for details
+
 Class(CudaUnparser, CUnparser, rec(
 
     simt_loop := meth(self, o, i, is) 

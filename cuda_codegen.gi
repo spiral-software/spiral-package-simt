@@ -1,3 +1,7 @@
+
+##  Copyright (c) 2018-2021, Carnegie Mellon University
+##  See LICENSE for details
+
 #############################################################################
 ##
 #F  MergeAndGroupRecord(<dst>,<rec1>,<rec2>...)  . . . . . . . merge the fields of records. Same fields get grouped into a set.

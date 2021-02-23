@@ -1,3 +1,7 @@
+
+##  Copyright (c) 2018-2021, Carnegie Mellon University
+##  See LICENSE for details
+
 Declare(simtBlockIdxX, simtBlockIdxY, simtBlockIdxZ);
 Declare(simtThreadIdxX, simtThreadIdxY, simtThreadIdxZ);
 Declare(simt_syncgrid, simt_syncblock, simt_synccluster);

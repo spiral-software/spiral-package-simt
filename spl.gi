@@ -1,3 +1,7 @@
+
+##  Copyright (c) 2018-2021, Carnegie Mellon University
+##  See LICENSE for details
+
 # A Taggable operator (see tags.gi) is translated into an analogous SIMT operator that carries dim tag info
  
 Class(SIMTTensor, Tensor, rec(

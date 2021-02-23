@@ -1,3 +1,7 @@
+
+##  Copyright (c) 2018-2021, Carnegie Mellon University
+##  See LICENSE for details
+
 # Icode objects that are not cuda-specific (those are defined in cuda_icode.gi)
 
 # A simt index is derived from a SIMT dim tag

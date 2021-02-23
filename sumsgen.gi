@@ -1,3 +1,7 @@
+
+##  Copyright (c) 2018-2021, Carnegie Mellon University
+##  See LICENSE for details
+
 # SIMT-operators transfer their dim tag info to SIMT-SUM/ISum operators when SPL is lowered to SigmaSPL
 
 Class(SIMTSumsGen, DefaultSumsGen, rec(
