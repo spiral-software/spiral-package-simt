@@ -583,7 +583,7 @@ Class(CudaCodegen, DefaultCodegen, rec(
         local hparams, hio, p, hp, init_datas, device_datas, ker_args,
               sub, initsub, destroysub,
               cuda_desc, cuda_icode, icode_wrap, initcode, destroycode, prog,
-              wrapk_f, devmem, vr;
+              wrapk_f, devmem, vr, kk;
 
         wrapk_f := When(IsBound(opts.devFunc) and opts.devFunc, self.wrap_kernel_devfunc, self.wrap_kernel);
         devmem := [];
@@ -623,13 +623,27 @@ Class(CudaCodegen, DefaultCodegen, rec(
 
         cuda_desc.devmem := [];
         if IsBound(opts.dynamicDeviceMemory) and opts.dynamicDeviceMemory then
-            devmem := List(cuda_desc.grid_tarrays, d-> rec(t := TPtr(d.t.t), n := d.t.size, id := d.id, var := var.fresh_t("Q", TPtr(d.t.t))));
+            devmem := List(cuda_desc.grid_tarrays, d-> rec(t := TPtr(d.t.t), n := d.t.size, id := d.id, 
+                var := var.fresh_t("Q", TPtr(d.t.t)), vvar := var.fresh_t("QQ", TPtr(d.t.t))));
             cuda_icode := SubstVars(cuda_icode, FoldR(devmem, (a,b) -> CopyFields(a, rec((b.id) := b.var)), rec()));
             cuda_desc.grid_tarrays := List(devmem, d->d.var);
             cuda_desc.devmem := devmem;
+            
+            cuda_icode := SubstTopDown(cuda_icode, @(1, specifiers_func),
+                e->CopyFields(e, rec(params:=e.params::Filtered(cuda_desc.grid_tarrays, i->i in e.free()))));
+
+            for kk in cuda_desc.cuda_kers do 
+                kk.cuda_ker := SubstTopDown(kk.cuda_ker, @(1, specifiers_func),
+                    e->CopyFields(e, rec(params:=e.params::Filtered(cuda_desc.grid_tarrays, i->i in e.free()))));
+            od;
+        
+            cuda_icode := SubstTopDown(cuda_icode, @(1, specifiers_func),
+                e->SubstVars(e, FoldR(devmem, (a,b) -> CopyFields(a, rec((b.var.id) := b.vvar)), rec())));
         fi;
 
-        icode_wrap := func(TVoid, sub, Concatenation(When(IsBound(opts.devFunc) and opts.devFunc, io, hio), hparams), chain(wrapk_f(self, cuda_desc, io, params, o.dimensions, opts)));
+        icode_wrap := func(TVoid, sub, Concatenation(When(IsBound(opts.devFunc) and opts.devFunc, io, hio), hparams), chain(wrapk_f(self, cuda_desc, io, 
+            params, o.dimensions, opts)));
+
         if IsBound(opts.generateInitFunc) and opts.generateInitFunc then
             initcode := self.make_init(initsub, initparams, init_datas, device_datas, cuda_desc, io, params, o.dimensions, opts);
             destroycode := self.make_destroy(destroysub, init_datas, device_datas, cuda_desc, io, params, opts);
