@@ -618,7 +618,7 @@ Class(CudaCodegen, DefaultCodegen, rec(
 
         cuda_desc.devmem := [];
         if IsBound(opts.dynamicDeviceMemory) and opts.dynamicDeviceMemory then
-            devmem := List(cuda_desc.grid_tarrays, d-> rec(t := TPtr(d.t.t), n := d.t.size, id := d.id, 
+            devmem := List(cuda_desc.grid_tarrays, d-> rec(t := d.t.t, n := d.t.size, id := d.id, 
                 var := var.fresh_t("Q", TPtr(d.t.t)), vvar := var.fresh_t("QQ", TPtr(d.t.t))));
             cuda_icode := SubstVars(cuda_icode, FoldR(devmem, (a,b) -> CopyFields(a, rec((b.id) := b.var)), rec()));
             cuda_desc.grid_tarrays := List(devmem, d->d.var);
